@@ -16,15 +16,20 @@ namespace lattice {
   protected:
     std::vector<Particle> particles_;
     unsigned long N_;
-    unsigned int max_V_;
+    unsigned int max_m_, max_V_;
     
     Solver(std::vector<Particle> particles, unsigned long N) {
       particles_ = particles;
       N_ = N;
+      
+      max_m_ = 0;
       max_V_ = 0;
       for (const Particle& p: particles_) {
         if (p.max_interaction_distance() > max_V_) {
           max_V_ = p.max_interaction_distance();
+        }
+        if (p.size() > max_m_) {
+          max_m_ = p.size();
         }
       }
     }

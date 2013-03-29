@@ -16,7 +16,7 @@
 const double BOLTZMANN = 0.0019872041;
 
 unsigned long lattice_size(config::Ark& config) {
-  return 8;
+  return 4;
 }
 
 double temperature(config::Ark& config) {
@@ -41,7 +41,7 @@ int main(int argc, const char * argv[]) {
   config::Ark ark;
   unsigned long N = lattice_size(ark);
   std::vector<lattice::Particle> particles = init_particles(ark);
-  lattice::Solver* solver = new lattice::TransferMatrixSolver(particles, N);
+  lattice::Solver* solver = new lattice::DynaProSolver(particles, N);
   
   std::string output("distribution.txt");
   std::ofstream of(output);

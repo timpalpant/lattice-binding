@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Main-Class: us.palpant.science.lattice.Main
+Bundle-ManifestVersion: 2
+Bundle-Name: lattice-binding
+Bundle-SymbolicName: lattice-binding
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Description: Calculate equilibrium binding of factors on a lattice
+Bundle-DocURL: http://github.com/timpalpant/lattice-binding

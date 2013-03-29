@@ -19,6 +19,7 @@ namespace lattice {
     std::vector<double> Z_;
     std::vector<bool> Z_cached_;
     std::vector<std::vector<double>> dZdK_;
+    std::vector<std::vector<bool>> dZdK_cached_;
     std::vector<std::vector<double>> c_;
     
     double Z(long n);
@@ -27,11 +28,16 @@ namespace lattice {
   public:
     DynaProSolver(std::vector<Particle> particles, unsigned long N) : Solver(particles, N) {
       Z_ = std::vector<double>(N+1);
-      dZdK_ = std::vector<std::vector<double>>(N+1);
       Z_cached_ = std::vector<bool>(N+1);
+      dZdK_ = std::vector<std::vector<double>>(N+1);
+      dZdK_cached_ = std::vector<std::vector<bool>>(N+1);
       for (int i = 0; i <= N; i++) {
-        dZdK_[i] = std::vector<double>(particles.size());
         Z_cached_[i] = false;
+        dZdK_[i] = std::vector<double>(particles.size());
+        dZdK_cached_[i] = std::vector<bool>(particles.size());
+        for (int j = 0; j < particles.size(); j++) {
+          dZdK_cached_[i][j] = false;
+        }
       }
       c_ = std::vector<std::vector<double>>(N);
       for (int n = 0; n < N; n++) {
