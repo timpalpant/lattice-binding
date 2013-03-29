@@ -32,7 +32,6 @@
 		1F84BFE016F534E9000D3DF8 /* lattice_binding.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = lattice_binding.1; sourceTree = "<group>"; };
 		1F84C20B16F53814000D3DF8 /* solver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = solver.h; sourceTree = "<group>"; };
 		1F84C20D16F53839000D3DF8 /* transfer_matrix_solver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = transfer_matrix_solver.h; sourceTree = "<group>"; };
-		1F84C20E16F5384E000D3DF8 /* ark.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ark.h; sourceTree = "<group>"; };
 		1F84C21116F53BEE000D3DF8 /* Array */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Array; sourceTree = "<group>"; };
 		1F84C21216F53BEE000D3DF8 /* Cholesky */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cholesky; sourceTree = "<group>"; };
 		1F84C21316F53BEE000D3DF8 /* CholmodSupport */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CholmodSupport; sourceTree = "<group>"; };
@@ -568,7 +567,6 @@
 				1F84BFDE16F534E9000D3DF8 /* main.cpp */,
 				1F84BFE016F534E9000D3DF8 /* lattice_binding.1 */,
 				1F84C20B16F53814000D3DF8 /* solver.h */,
-				1F84C20E16F5384E000D3DF8 /* ark.h */,
 				1F84C43416F56255000D3DF8 /* particle.h */,
 				1F84C20D16F53839000D3DF8 /* transfer_matrix_solver.h */,
 				1F84C43616F563E3000D3DF8 /* transfer_matrix_solver.cpp */,
@@ -1629,7 +1627,7 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = NO;
-				HEADER_SEARCH_PATHS = "libs/**";
+				HEADER_SEARCH_PATHS = libs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1640,7 +1638,7 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = NO;
-				HEADER_SEARCH_PATHS = "libs/**";
+				HEADER_SEARCH_PATHS = libs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

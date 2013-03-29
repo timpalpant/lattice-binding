@@ -15,15 +15,15 @@
 
 const double BOLTZMANN = 0.0019872041;
 
-unsigned long lattice_size(config::Ark& config) {
+unsigned long lattice_size(ark::Ark& config) {
   return 4;
 }
 
-double temperature(config::Ark& config) {
+double temperature(ark::Ark& config) {
   return 1.0 / BOLTZMANN;
 }
 
-std::vector<lattice::Particle> init_particles(config::Ark& config) {
+std::vector<lattice::Particle> init_particles(ark::Ark& config) {
   std::vector<lattice::Particle> particles;
   lattice::Particle p(3, 0, 0.0, 0.0, 1.0);
   p.set_beta(1.0 / (BOLTZMANN * temperature(config)));
@@ -38,7 +38,7 @@ int main(int argc, const char * argv[]) {
   }
   
   //config::Ark ark = config::Ark::fromArgv(argv);
-  config::Ark ark;
+  ark::Ark ark;
   unsigned long N = lattice_size(ark);
   std::vector<lattice::Particle> particles = init_particles(ark);
   lattice::Solver* solver = new lattice::DynaProSolver(particles, N);
