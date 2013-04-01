@@ -10,11 +10,11 @@
 #define lattice_binding_particle_h
 
 #include <cmath>
-#include "ark.h"
 
 namespace lattice {
   class Particle {
   private:
+    std::string name_;
     unsigned int size_, max_interaction_distance_;
     double chemical_potential_, potential_, beta_, unwrap_;
     
@@ -28,10 +28,7 @@ namespace lattice {
       unwrap_ = unwrap;
     }
     
-    Particle(config::Ark& config) {
-      
-    }
-    
+    std::string name() const { return name_; }
     unsigned int size() const { return size_; }
     unsigned int max_interaction_distance() const { return max_interaction_distance_; }
     double chemical_potential() const { return chemical_potential_; }

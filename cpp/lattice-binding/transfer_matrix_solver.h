@@ -33,7 +33,8 @@ namespace lattice {
     }
     
   public:
-    TransferMatrixSolver(std::vector<Particle>& particles, unsigned long N) : Solver(particles, N) { }
+    TransferMatrixSolver(const std::vector<Particle>& particles,
+                         std::size_t N) : Solver(particles, N) { }
     
     virtual double Z() override {
       if (Z_ == 0) {

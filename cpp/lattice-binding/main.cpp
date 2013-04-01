@@ -7,47 +7,42 @@
 //
 
 #include <iostream>
-#include <vector>
 #include <fstream>
-#include "ark.h"
+#include "parameters.h"
 #include "transfer_matrix_solver.h"
 #include "dynapro_solver.h"
 
-const double BOLTZMANN = 0.0019872041;
-
-unsigned long lattice_size(ark::Ark& config) {
-  return 4;
-}
-
-double temperature(ark::Ark& config) {
-  return 1.0 / BOLTZMANN;
-}
-
-std::vector<lattice::Particle> init_particles(ark::Ark& config) {
-  std::vector<lattice::Particle> particles;
-  lattice::Particle p(3, 0, 0.0, 0.0, 1.0);
-  p.set_beta(1.0 / (BOLTZMANN * temperature(config)));
-  particles.push_back(p);
-  return particles;
+lattice::Solver* initSolver(const lattice::Parameters& params) throw (lattice::config_error) {
+  switch (params.solver()) {
+    case lattice::SOLVER::DYNAPRO:
+      return new lattice::DynaProSolver(params.particles(),
+                                        params.lattice_size());
+    case lattice::SOLVER::TRANSFER_MATRIX:
+      return new lattice::TransferMatrixSolver(params.particles(),
+                                               params.lattice_size());
+    default:
+      throw lattice::config_error("Unknown solver");
+  }
 }
 
 int main(int argc, const char * argv[]) {
-  if (argc < 2) {
-    std::cout << "USAGE: lattice-binding [--include ARK] [--cfg KEY=VALUE]" << std::endl;
+  if (argc < 3) {
+    std::cerr << "USAGE: lattice-binding [--include ARK] [--cfg KEY=VALUE]" << std::endl;
     return 2;
   }
   
-  //config::Ark ark = config::Ark::fromArgv(argv);
-  ark::Ark ark;
-  unsigned long N = lattice_size(ark);
-  std::vector<lattice::Particle> particles = init_particles(ark);
-  lattice::Solver* solver = new lattice::DynaProSolver(particles, N);
+  lattice::Parameters params = lattice::Parameters::for_argv(argc, argv);
+  lattice::Solver* solver = initSolver(params);
   
-  std::string output("distribution.txt");
-  std::ofstream of(output);
-  for (int n = 1; n <= N; n++) {
+  std::ofstream of(params.output().string());
+  of << "# Position";
+  for (const lattice::Particle& p : solver->particles()) {
+    of << '\t' << p.name();
+  }
+  of << std::endl;
+  for (std::size_t n = 1; n <= solver->N(); n++) {
     of << n;
-    for (int g = 1; g <= particles.size(); g++) {
+    for (std::size_t g = 1; g <= solver->particles().size(); g++) {
       of << '\t' << solver->c(n, g);
     }
     of << std::endl;

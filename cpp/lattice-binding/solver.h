@@ -15,13 +15,11 @@ namespace lattice {
   class Solver {
   protected:
     std::vector<Particle> particles_;
-    unsigned long N_;
+    std::size_t N_;
     unsigned int max_m_, max_V_;
     
-    Solver(std::vector<Particle> particles, unsigned long N) {
-      particles_ = particles;
-      N_ = N;
-      
+    Solver(const std::vector<Particle>& particles,
+           std::size_t N) : particles_(particles), N_(N) {
       max_m_ = 0;
       max_V_ = 0;
       for (const Particle& p: particles_) {
@@ -47,7 +45,7 @@ namespace lattice {
       for (unsigned short h = h1+1; h <= m(g)-h2; h++) {
         product *= K(N_-m(g)+h, g, h);
       }
-    return product;
+      return product;
     }
     
     double dK(unsigned long n, unsigned short g, unsigned short h) const {
@@ -80,6 +78,9 @@ namespace lattice {
   public:
     virtual double Z() = 0;
     virtual double c(unsigned long n, unsigned short g) = 0;
+    
+    const std::vector<Particle>& particles() const { return particles_; }
+    std::size_t N() const { return N_; }
   };
 }
 

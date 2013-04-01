@@ -26,7 +26,8 @@ namespace lattice {
     double dZdK(long n, unsigned short g);
     
   public:
-    DynaProSolver(std::vector<Particle> particles, unsigned long N) : Solver(particles, N) {
+    DynaProSolver(const std::vector<Particle>& particles,
+                  unsigned long N) : Solver(particles, N) {
       Z_ = std::vector<double>(N+1);
       Z_cached_ = std::vector<bool>(N+1);
       dZdK_ = std::vector<std::vector<double>>(N+1);
