@@ -1,0 +1,10 @@
+C++:
+- Finish unwrapping transfer matrix solver
+- Finish unwrapping dynapro solver
+- Parse parameters
+
+Java:
+- Finish unwrapping transfer matrix solver
+- Finish unwrapping dynapro solver
+- Parse parameters
+- Update to reflect C++ design
