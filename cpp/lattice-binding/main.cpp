@@ -2,6 +2,9 @@
 //  main.cpp
 //  lattice-binding
 //
+//  Solve equilibrium 1D lattice binding problems
+//  e.g. protiein-DNA binding
+//
 //  Created by Timothy Palpant on 3/16/13.
 //  Copyright (c) 2013 Timothy Palpant. All rights reserved.
 //
@@ -12,12 +15,13 @@
 #include "transfer_matrix_solver.h"
 #include "dynapro_solver.h"
 
-lattice::Solver* initSolver(const lattice::Parameters& params) throw (lattice::config_error) {
+lattice::Solver* initSolver(const lattice::Parameters& params)
+    throw (lattice::config_error) {
   switch (params.solver()) {
-    case lattice::SOLVER::DYNAPRO:
+    case lattice::SolverType::kDynaPro:
       return new lattice::DynaProSolver(params.particles(),
                                         params.lattice_size());
-    case lattice::SOLVER::TRANSFER_MATRIX:
+    case lattice::SolverType::kTransferMatrix:
       return new lattice::TransferMatrixSolver(params.particles(),
                                                params.lattice_size());
     default:
@@ -33,6 +37,8 @@ int main(int argc, const char * argv[]) {
   
   lattice::Parameters params = lattice::Parameters::for_argv(argc, argv);
   lattice::Solver* solver = initSolver(params);
+  std::cout << "Solving equilibrium particle distribution" << std::endl;
+  solver->solve();
   
   std::ofstream of(params.output().string());
   of << "# Position";
@@ -47,5 +53,7 @@ int main(int argc, const char * argv[]) {
     }
     of << std::endl;
   }
+  
+  return 0;
 }
 

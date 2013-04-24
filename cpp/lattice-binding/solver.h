@@ -76,6 +76,7 @@ namespace lattice {
     virtual ~Solver() {}
     
   public:
+    virtual void solve() = 0;
     virtual double Z() = 0;
     virtual double c(unsigned long n, unsigned short g) = 0;
     

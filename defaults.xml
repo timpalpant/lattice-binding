@@ -1,0 +1,17 @@
+<lattice>
+    <length>100</length>
+    <bc>fixed</bc>
+</lattice>
+
+<particles>
+    <nuc>
+        <size>15</size>
+        <potential></potential>
+    </nuc>
+</particles>
+
+<solver>
+    <type>transfer_matrix</type>
+    <beta>1.0</beta>
+    <output>test.txt</output>
+</solver>

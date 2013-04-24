@@ -9,42 +9,39 @@
 #ifndef lattice_binding_parameters_h
 #define lattice_binding_parameters_h
 
-#include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem.hpp>
+#include "config_error.h"
 #include "particle.h"
 
 namespace lattice {
-  enum class SOLVER {DYNAPRO, TRANSFER_MATRIX};
-  
-  class config_error : public std::runtime_error {
-  public:
-    explicit config_error(const std::string& what_arg)
-      : std::runtime_error(what_arg) { }
-    explicit config_error(const char* what_arg)
-      : std::runtime_error(what_arg) { }
-  };
+  enum class SolverType {kDynaPro, kTransferMatrix};
+  enum class BoundaryCondition {kFixed, kPeriodic};
   
   class Parameters {
   private:
-    double temperature_;
+    double beta_;
     std::size_t lattice_size_;
+    BoundaryCondition bc_;
     std::vector<Particle> particles_;
-    SOLVER solver_;
+    SolverType solver_;
     boost::filesystem::path output_;
-    
-    Parameters() { }
     
   public:
     static Parameters load(const boost::filesystem::path& p) throw (config_error);
     static Parameters for_argv(int argc, const char* argv[]) throw (config_error);
     
-    void update(const boost::property_tree::ptree& pt) throw (config_error);
-    
     const std::vector<Particle>& particles() const { return particles_; }
-    double temperature() const { return temperature_; }
+    void add_particle(const Particle& p) { particles_.push_back(p); }
+    double beta() const { return beta_; }
+    void set_beta(const double beta) { beta_ = beta; }
     std::size_t lattice_size() const { return lattice_size_; }
-    SOLVER solver() const { return solver_; }
+    void set_lattice_size(const std::size_t N) { lattice_size_ = N; }
+    BoundaryCondition bc() const { return bc_; }
+    void set_boundary_condition(const BoundaryCondition bc) { bc_ = bc; }
+    SolverType solver() const { return solver_; }
+    void set_solver(SolverType s) { solver_ = s; }
     boost::filesystem::path output() const { return output_; }
+    void set_output(const boost::filesystem::path& p) { output_ = p; }
   };
 }
 

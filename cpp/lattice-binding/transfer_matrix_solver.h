@@ -20,7 +20,6 @@ namespace lattice {
     double Z_;
     std::vector<std::vector<double>> c_;
     
-    void solve();
     void Q(Eigen::SparseMatrix<double>& Q, unsigned long n);
     void dQdK(Eigen::SparseMatrix<double>& dQdK, unsigned long n, unsigned short g);
     
@@ -35,6 +34,8 @@ namespace lattice {
   public:
     TransferMatrixSolver(const std::vector<Particle>& particles,
                          std::size_t N) : Solver(particles, N) { }
+    
+    virtual void solve() override;
     
     virtual double Z() override {
       if (Z_ == 0) {

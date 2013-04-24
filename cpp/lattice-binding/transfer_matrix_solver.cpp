@@ -14,7 +14,7 @@ namespace lattice {
 
   void TransferMatrixSolver::solve() {
     unsigned int R = num_states();
-    size_t f = particles_.size();
+    std::size_t f = particles_.size();
     std::cout << "Transfer matrix for " << f << " particles has " << R << " states" << std::endl;
     Eigen::VectorXd J = Eigen::VectorXd::Constant(R, 1);
     Eigen::VectorXd A = Eigen::VectorXd::Constant(R, 1);
@@ -30,7 +30,7 @@ namespace lattice {
       Q(Qn, n);
       // std::cout << "Q(" << n << ") has ";
       // std::cout << Qn.nonZeros() << "/" << Qn.size() << " nonzero elements" << std::endl;
-      std::cout << Qn << std::endl;
+      // std::cout << Qn << std::endl;
       for (unsigned short g = 1; g <= f; g++) {
         dQdK(dQdKn, n, g);
         // std::cout << "dQdK(" << n << "," << g << ") has ";

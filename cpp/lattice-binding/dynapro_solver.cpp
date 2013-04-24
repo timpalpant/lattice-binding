@@ -10,6 +10,10 @@
 
 namespace lattice {
   
+  void DynaProSolver::solve() {
+    
+  }
+  
   double DynaProSolver::Z(long n) {
     if (n < 1) {
       return 0;

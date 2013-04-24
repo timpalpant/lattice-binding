@@ -8,18 +8,146 @@
 
 #include "parameters.h"
 
-namespace lattice {
-  const double BOLTZMANN = 0.0019872041;
+#include <queue>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+namespace lattice {  
+  Parameters parse(const boost::property_tree::ptree& pt) throw (config_error) {
+    Parameters params;
+    
+    double beta_;
+    std::size_t lattice_size_;
+    std::vector<Particle> particles_;
+    SolverType solver_;
+    boost::filesystem::path output_;
+    
+    // Load lattice parameters
+    params.set_lattice_size(pt.get<std::size_t>("lattice.length"));
+    std::string bc = pt.get("lattice.bc", "fixed");
+    if (bc == "fixed") {
+      params.set_boundary_condition(BoundaryCondition::kFixed);
+    } else if (bc == "periodic") {
+      params.set_boundary_condition(BoundaryCondition::kPeriodic);
+    } else {
+      throw config_error("Unknown boundary condition: "+bc);
+    }
+    
+    // Load solver parameters
+    const boost::property_tree::ptree& sconfig = pt.get_child("solver");
+    params.set_beta(sconfig.get("beta", 1.0));
+    params.set_output(sconfig.get<boost::filesystem::path>("output"));
+    std::string solver_type = sconfig.get<std::string>("type");
+    if (solver_type == "dynapro") {
+      params.set_solver(SolverType::kDynaPro);
+    } else if (solver_type == "transfer_matrix") {
+      params.set_solver(SolverType::kTransferMatrix);
+    } else {
+      throw config_error("Unknown solver: "+solver_type);
+    }
+    
+    // Load particle parameters
+    const boost::property_tree::ptree& particles = pt.get_child("particles");
+    for (const std::pair<std::string,boost::property_tree::ptree>& ppair : particles) {
+      std::string name = ppair.first;
+      std::cout << "Initializing particle " << name << std::endl;
+      boost::property_tree::ptree pconfig = ppair.second;
+      Particle particle(name);
+      particle.configure(pconfig);
+      params.add_particle(particle);
+    }
+    
+    return params;
+  }
+
+  /**
+  * Merge one property tree into another
+  */  
+  void merge(boost::property_tree::ptree& rptFirst, 
+             const boost::property_tree::ptree& rptSecond) {
+    // Keep track of keys and values (subtrees) in second property tree
+    std::queue<std::string> qKeys;
+    std::queue<boost::property_tree::ptree> qValues;
+    qValues.push(rptSecond);
+
+    // Iterate over second property tree
+    while(!qValues.empty()) {
+      // Setup keys and corresponding values
+      boost::property_tree::ptree ptree = qValues.front();
+      qValues.pop();
+      std::string keychain = "";
+      if(!qKeys.empty()) {
+        keychain = qKeys.front();
+        qKeys.pop();
+      }
+
+      // Iterate over keys level-wise
+      for(const boost::property_tree::ptree::value_type& child : ptree) {
+        if(child.second.size() == 0) { // Leaf
+          // No "." for first level entries
+          std::string s;
+          if(keychain != "") {
+            s = keychain + "." + child.first.data();
+          } else {
+            s = child.first.data();
+          }
+
+          // Put into combined property tree
+          rptFirst.put(s, child.second.data());
+        } else { // Subtree
+          // Put keys (identifiers of subtrees) and all of its parents (where present)
+          // aside for later iteration. Keys on first level have no parents
+          if(keychain != "") {
+            qKeys.push(keychain + "." + child.first.data());
+          } else {
+            qKeys.push(child.first.data());
+          }
+        
+          // Put values (the subtrees) aside, too
+          qValues.push( child.second );
+        }
+      }
+    }
+  }
+
+  boost::property_tree::ptree load_cfg_file(const boost::filesystem::path& p) {
+    boost::property_tree::ptree pt;
+    std::cout << "Loading configuration from " << p << std::endl;
+    boost::property_tree::read_xml(p.string(), pt);
+    return pt;
+  }
   
   Parameters Parameters::load(const boost::filesystem::path& p) throw (config_error) {
-    
+    return parse(load_cfg_file(p));
   }
   
-  Parameters Parameters::for_argv(int argc, const char* argv[]) throw (config_error) {
+  Parameters Parameters::for_argv(const int argc, const char* argv[]) throw (config_error) {
+    boost::property_tree::ptree pt;
+    bool is_include = false, is_cfg = false;
+    for (int i = 1; i < argc; i++) {
+      std::string arg(argv[i]);
+      if (arg.compare("--include") == 0) {
+        is_include = true;
+      } else if (arg.compare("--cfg") == 0) {
+        is_cfg = true;
+      } else {
+        if (is_include) {
+          merge(pt, load_cfg_file(arg));
+        } else if (is_cfg) {
+          std::string::size_type eq = arg.find('=');
+          std::string key = arg.substr(0, eq);
+          std::string value = arg.substr(eq+1);
+          pt.put(key, value);
+        } else {
+          std::cerr << "USAGE: lattice-binding [--include ARK] [--cfg KEY=VALUE]" << std::endl;
+          throw config_error("Cannot parse arguments");
+        }
+        
+        is_include = false;
+        is_cfg = false;
+      }
+    }
     
-  }
-  
-  void Parameters::update(const boost::property_tree::ptree& pt) throw (config_error) {
-    
+    return parse(pt);
   }
 }
