@@ -16,12 +16,6 @@ namespace lattice {
   Parameters parse(const boost::property_tree::ptree& pt) throw (config_error) {
     Parameters params;
     
-    double beta_;
-    std::size_t lattice_size_;
-    std::vector<Particle> particles_;
-    SolverType solver_;
-    boost::filesystem::path output_;
-    
     // Load lattice parameters
     params.set_lattice_size(pt.get<std::size_t>("lattice.length"));
     std::string bc = pt.get("lattice.bc", "fixed");
